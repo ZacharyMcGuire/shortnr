@@ -1,5 +1,6 @@
 import os
-from flask import Flask
+from nanoid import generate
+from flask import Flask, request
 from flask_mongoengine import MongoEngine
 
 
@@ -27,5 +28,17 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return "Hello, World!!"
+
+    @app.route('/create', methods=["POST"])
+    def create_short_url():
+        """Create a new shortened URL and return it."""
+        req_data = request.get_json()
+        url = req_data['url']
+        if 'slug' in req_data:
+            slug = req_data['slug']
+        else:
+            slug = generate(size=7)
+
+        return slug
 
     return app
