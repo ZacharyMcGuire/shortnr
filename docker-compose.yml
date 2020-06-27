@@ -1,0 +1,8 @@
+version: "3.7"
+
+services:
+    web:
+        build: .
+        command: sh -c "flask run -p 1337"
+        ports:
+            - 1337:1337
