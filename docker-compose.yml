@@ -12,16 +12,12 @@ services:
             FLASK_APP: shortnr
             FLASK_ENV: development
             SECRET_KEY: 'd950ce0d-98b5-4bba-9cf1-addaa8ba7ba8'
-            MONGODB_HOST: localhost
-            MONGODB_PORT: '27017'
-            MONGODB_USERNAME: dev
-            MONGODB_PASSWORD: 7520c7c1
+            DATABASE_URI: postgresql+pg8000://postgres:7520c7c1@localhost/shortnr
         volumes:
             - .:/usr/src/shortnr
     db:
-        image: mongo:4.2.8-bionic
+        image: postgres:12-alpine
         environment:
-            MONGO_INITDB_ROOT_USERNAME: dev
-            MONGO_INITDB_ROOT_PASSWORD: 7520c7c1
+            POSTGRES_PASSWORD: 7520c7c1
         ports:
-            - 27017:27017
+            - 5432:5432
