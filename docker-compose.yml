@@ -1,23 +1,25 @@
 version: "3.7"
 
 services:
-    web:
-        build: .
-        command: sh -c "flask run -p 1337"
-        ports:
-            - 1337:1337
-        depends_on:
-            - db
-        environment:
-            FLASK_APP: shortnr
-            FLASK_ENV: development
-            SECRET_KEY: 'd950ce0d-98b5-4bba-9cf1-addaa8ba7ba8'
-            DATABASE_URI: postgresql+pg8000://postgres:7520c7c1@localhost/shortnr
-        volumes:
-            - .:/usr/src/shortnr
-    db:
-        image: postgres:12-alpine
-        environment:
-            POSTGRES_PASSWORD: 7520c7c1
-        ports:
-            - 5432:5432
+  web:
+    build: .
+    command: sh -c "flask wait-for-db && flask init-db && flask run -p 1337"
+    ports:
+      - 1337:1337
+    depends_on:
+      - db
+    environment:
+      FLASK_APP: shortnr/app.py
+      FLASK_ENV: development
+      SECRET_KEY: 'd950ce0d-98b5-4bba-9cf1-addaa8ba7ba8'
+      DATABASE_URI: postgresql://root:7520c7c1@db:5432/shortnr
+    volumes:
+      - .:/usr/src/shortnr
+  db:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 7520c7c1
+      POSTGRES_DB: shortnr
+    ports:
+      - 5432:5432
