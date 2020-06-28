@@ -1,7 +1,7 @@
 import datetime
 import os
 import click
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from nanoid import generate
 from sqlalchemy import exc
@@ -44,7 +44,18 @@ def create_short_url():
     db.session.add(record)
     db.session.commit()
 
-    return slug
+    return f'{request.url_root}{slug}'
+
+
+@app.route('/<slug>', methods=["GET"])
+def redirect_from_short_url(slug):
+    """Lookup the provided slug in the db and redirect to the URL, or route back to URL root."""
+    try:
+        record = Url.query.filter_by(slug=slug).first()
+        redirect_url = record.url
+        return redirect(redirect_url, 308)
+    except AttributeError:
+        return redirect(request.url_root)
 
 
 @app.cli.command('wait-for-db')
