@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shortnr</title>
+</head>
+<body>
+<header>
+    <h1>Shortnr - URLs, but shorter.</h1>
+</header>
+<form method="POST" action="{{ url_for('create_short_url') }}">
+    {{ form.csrf_token }}
+    <div>{{ form.slug.label }}: {{ form.slug }}</div>
+    {% if form.slug.errors %}
+    <ul class="errors">{% for error in form.slug.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div>{{ form.url.label }}: {{ form.url }}</div>
+    {% if form.url.errors %}
+    <ul class="errors">{% for error in form.url.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <button type="submit" value="Go">Create</button>
+</form>
+</body>
+</html>

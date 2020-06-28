@@ -1,11 +1,12 @@
 import datetime
 import os
 import click
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from nanoid import generate
 from sqlalchemy import exc
 from sqlalchemy_utils import URLType
+from shortnr import forms
 
 app = Flask(__name__)
 app.config.from_mapping(
@@ -25,17 +26,19 @@ class Url(db.Model):
         return self.slug
 
 
-@app.route('/')
-def hello():
-    return "Hello, World!"
+@app.route('/', methods=['GET'])
+def index():
+    """Website root URL. Present the ShortUrlForm."""
+    form = forms.ShortUrlForm()
+    return render_template('index.html', form=form)
 
 
 @app.route('/create', methods=["POST"])
 def create_short_url():
     """Create a new shortened URL and return it."""
-    req_data = request.get_json()
+    req_data = request.form
     url = req_data['url']
-    if 'slug' in req_data:
+    if 'slug' in req_data and req_data['slug'] != '':
         slug = req_data['slug']
     else:
         slug = generate(size=7)
@@ -55,7 +58,7 @@ def redirect_from_short_url(slug):
         redirect_url = record.url
         return redirect(redirect_url, 308)
     except AttributeError:
-        return redirect(request.url_root)
+        return '404'
 
 
 @app.cli.command('wait-for-db')
