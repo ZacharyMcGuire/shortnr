@@ -1,8 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField
-from wtforms.validators import Length, InputRequired, URL
+from wtforms.validators import data_required, url, length
+from wtforms.fields import StringField
+from wtforms.fields.html5 import URLField
 
 
 class ShortUrlForm(FlaskForm):
-    slug = StringField('Slug', [Length(max=7)])
-    url = StringField('URL', [URL(require_tld=True, message='Please enter a valid URL'), InputRequired()])
+    url = URLField(u'Enter a URL', validators=[
+        data_required(),
+        url()
+    ])
