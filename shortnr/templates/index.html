@@ -14,11 +14,15 @@
             <div class="main col-md-12">
                 <header class="text-center">
                     <h1>
-                        Shortnr &hookleftarrow;<br>
+                        <a href="{{ url_for('index') }}">
+                            Shortnr &hookleftarrow;
+                        </a>
+                        <br>
                         <small>URLs, but shorter.</small>
                     </h1>
                 </header>
 
+                {% if not shortnr_url %}
                 <form class="col-sm-12 col-md-8 col-lg-6" method="POST" action="{{ url_for('create_short_url') }}">
                     {{ form.csrf_token }}
                     {% if form.url.errors %}
@@ -38,11 +42,23 @@
                         </div>
                     </div>
                 </form>
+                {% else %}
+                <form class="col-sm-12 col-md-8 col-lg-6">
+                    <div class="form-label-group input-group">
+                        <input type="text" class="form-control" value="{{ shortnr_url }}" id="copy-input">
+                        <label for="copy-input">Shortnr URL</label>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary btn-lg" id="button-copy" onclick="copyFunction()">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
             </div>
-
         </div>
-
     </div>
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>
 
 </html>

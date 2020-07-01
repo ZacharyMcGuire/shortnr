@@ -1,7 +1,7 @@
 import datetime
 import os
 import click
-from flask import Flask, request, redirect, url_for, render_template
+from flask import Flask, request, redirect, url_for, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 from nanoid import generate
 from sqlalchemy import exc
@@ -28,8 +28,17 @@ class Url(db.Model):
 
 @app.route('/', methods=['GET'])
 def index():
-    """Website root URL. Present the ShortUrlForm."""
+    """
+    Default: present the ShortUrlForm
+    Conditional: if the form has been submitted, display the shortnr_url
+    """
     form = forms.ShortUrlForm()
+    try:
+        shortnr_url = session['shortnr_url']
+        session.pop('shortnr_url')
+        return render_template('index.html', form=form, shortnr_url=shortnr_url)
+    except KeyError:
+        pass
     return render_template('index.html', form=form)
 
 
@@ -47,7 +56,9 @@ def create_short_url():
     db.session.add(record)
     db.session.commit()
 
-    return f'{request.url_root}{slug}'
+    session['shortnr_url'] = f'{request.url_root}{slug}'
+
+    return redirect(url_for('index',))
 
 
 @app.route('/<slug>', methods=["GET"])
